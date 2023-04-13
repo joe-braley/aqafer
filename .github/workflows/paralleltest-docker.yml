@@ -14,12 +14,16 @@ on:
         required: true
         type: string
         default: 'adoptium/aqa-tests:v0.9.6-release'
+      containerregistry:
+        description: registry
+        required: true
+        default: funregistry.azurecr.io/ubuntu
 
 jobs:
   setup-parallel-docker:
     runs-on: ubuntu-latest
     container:
-      image: ${{ secrets.CONTAINER_REGISTRY }}
+      image: ${{ inputs.containerregistry }}
       env:
         USE_TESTENV_PROPERTIES: true
       options: --cpus 2
@@ -31,58 +35,60 @@ jobs:
       matrix:
         suite: [functional, openjdk, system, perf]
     steps:
+        - bash:
+            echo hello world
+          displayName: run script
+  #     - uses: adoptium/run-aqa@v2.0.1
+  #       with:
+  #         jdksource: 'customized'
+  #         customizedSdkUrl: ${{ inputs.customizedSdkUrl }}
+  #         aqa-testsRepo: ${{ inputs.aqatest-repo }}
+  #         build_list: ${{ matrix.suite }}
+  #         target: ${{ matrix.suite }} # parallellist to generate
+  #         run_parallel: true
+  #         num_machines: 4
 
-      - uses: adoptium/run-aqa@v2.0.1
-        with:
-          jdksource: 'customized'
-          customizedSdkUrl: ${{ inputs.customizedSdkUrl }}
-          aqa-testsRepo: ${{ inputs.aqatest-repo }}
-          build_list: ${{ matrix.suite }}
-          target: ${{ matrix.suite }} # parallellist to generate
-          run_parallel: true
-          num_machines: 4
+  #     - name: Archive parallelList - ${{ matrix.suite }}
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: ${{ matrix.suite }}-parallelList.mk
+  #         path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
 
-      - name: Archive parallelList - ${{ matrix.suite }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.suite }}-parallelList.mk
-          path: ${{ github.workspace }}/aqa-tests/TKG/parallelList.mk
+  # run-aqa-parallel-docker:
+  #   runs-on: ubuntu-latest
+  #   needs: setup-parallel-docker
+  #   container:
+  #     image: ${{ secrets.CONTAINER_REGISTRY }}
+  #     env:
+  #       USE_TESTENV_PROPERTIES: true
+  #     options: --cpus 2
+  #     credentials:
+  #       username: ${{ secrets.ACR_TOKEN_NAME }}
+  #       password: ${{ secrets.AZURE_ACR_TOKEN_PASS1 }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       test_list: ['testList_0', 'testList_1', 'testList_2', 'testList_3'] # numlist is hardcoded...for now
+  #       suite: [functional, openjdk, system, perf]
+  #   steps:
 
-  run-aqa-parallel-docker:
-    runs-on: ubuntu-latest
-    needs: setup-parallel-docker
-    container:
-      image: ${{ secrets.CONTAINER_REGISTRY }}
-      env:
-        USE_TESTENV_PROPERTIES: true
-      options: --cpus 2
-      credentials:
-        username: ${{ secrets.ACR_TOKEN_NAME }}
-        password: ${{ secrets.AZURE_ACR_TOKEN_PASS1 }}
-    strategy:
-      fail-fast: false
-      matrix:
-        test_list: ['testList_0', 'testList_1', 'testList_2', 'testList_3'] # numlist is hardcoded...for now
-        suite: [functional, openjdk, system, perf]
-    steps:
+  #     - name: Download parallelList - ${{ matrix.suite }}
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: ${{ matrix.suite }}-parallelList.mk
+  #         path: ./
 
-      - name: Download parallelList - ${{ matrix.suite }}
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ matrix.suite }}-parallelList.mk
-          path: ./
+  #     - name: Run AQA Docker Paralleltest ${{ matrix.suite }}_${{ matrix.test_list }}
+  #       uses: adoptium/run-aqa@v2.0.1
+  #       with:
+  #         jdksource: 'customized'
+  #         customizedSdkUrl: ${{ inputs.customizedSdkUrl }}
+  #         aqa-testsRepo: ${{ inputs.aqatest-repo }}
+  #         build_list: ${{ matrix.suite }}
+  #         target : -f parallelList.mk ${{ matrix.test_list }}
 
-      - name: Run AQA Docker Paralleltest ${{ matrix.suite }}_${{ matrix.test_list }}
-        uses: adoptium/run-aqa@v2.0.1
-        with:
-          jdksource: 'customized'
-          customizedSdkUrl: ${{ inputs.customizedSdkUrl }}
-          aqa-testsRepo: ${{ inputs.aqatest-repo }}
-          build_list: ${{ matrix.suite }}
-          target : -f parallelList.mk ${{ matrix.test_list }}
-
-      - uses: actions/upload-artifact@v2
-        if: always() # Always run this step (even if the tests failed)
-        with:
-          name: test_output_${{ matrix.suite }}_${{ matrix.test_list }}
-          path: ./**/output_*/*.tap
+  #     - uses: actions/upload-artifact@v2
+  #       if: always() # Always run this step (even if the tests failed)
+  #       with:
+  #         name: test_output_${{ matrix.suite }}_${{ matrix.test_list }}
+  #         path: ./**/output_*/*.tap
