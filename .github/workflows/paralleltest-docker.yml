@@ -37,7 +37,7 @@ jobs:
     steps:
         - run:
             echo hello world
-          displayName: run script
+          name: run script
   #     - uses: adoptium/run-aqa@v2.0.1
   #       with:
   #         jdksource: 'customized'
