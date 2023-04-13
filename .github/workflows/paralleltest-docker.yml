@@ -35,7 +35,7 @@ jobs:
       matrix:
         suite: [functional, openjdk, system, perf]
     steps:
-        - bash:
+        - run:
             echo hello world
           displayName: run script
   #     - uses: adoptium/run-aqa@v2.0.1
