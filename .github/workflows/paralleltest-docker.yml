@@ -17,7 +17,7 @@ on:
       containerregistry:
         description: registry
         required: true
-        default: funregistry.azurecr.io/ubuntu
+        default: funregistry.azurecr.io
 
 jobs:
   setup-parallel-docker:
