@@ -35,6 +35,10 @@ jobs:
       matrix:
         suite: [functional, openjdk, system, perf]
     steps:
+      - name: install deps
+        run: |
+          apt install curl
+        
       - name: Setup ANT_HOME
         working-directory: ${{ github.workspace }}
         shell: bash
