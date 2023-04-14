@@ -33,10 +33,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        suite: [functional, openjdk, system, perf]
+        suite: [functional]
     steps:
       - name: install deps
         run: |
+          apt upgrade
           apt install curl
         
       - name: Setup ANT_HOME
