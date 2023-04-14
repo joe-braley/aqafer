@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: install deps
         run: |
-          apt upgrade
+          apt update
           apt install curl
         
       - name: Setup ANT_HOME
