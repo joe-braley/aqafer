@@ -38,7 +38,7 @@ jobs:
       - name: install deps
         run: |
           apt update
-          apt install curl
+          apt install -y curl
         
       - name: Setup ANT_HOME
         working-directory: ${{ github.workspace }}
