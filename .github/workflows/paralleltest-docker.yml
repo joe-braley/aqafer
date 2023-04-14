@@ -59,7 +59,7 @@ jobs:
 
       - name: echo ant home
         run: |
-          echo "$ANT_HOME/bin" >> $GITHUB_ENV
+          echo "$ANT_HOME/bin" >> $GITHUB_PATH
   
       - name: run ant
         run: |
