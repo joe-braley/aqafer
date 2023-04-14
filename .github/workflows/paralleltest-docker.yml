@@ -53,10 +53,14 @@ jobs:
           echo "$ANT_HOME/bin" >> $GITHUB_PATH
           echo $PATH
 
-      - name: run ant
+      - name: echo env
         run: |
           echo $ANT_HOME
           echo $PATH
+          ant
+
+      - name: run ant
+        run: |
           ant
   #     - uses: adoptium/run-aqa@v2.0.1
   #       with:
