@@ -63,6 +63,7 @@ jobs:
   
       - name: run ant
         run: |
+          echo $PATH
           ant
   #     - uses: adoptium/run-aqa@v2.0.1
   #       with:
